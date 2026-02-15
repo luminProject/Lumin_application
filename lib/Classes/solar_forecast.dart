@@ -1,5 +1,4 @@
 import 'forcast_model.dart';
-import 'weather_data.dart';
 
 class SolarForecast {
   int forecast_id;

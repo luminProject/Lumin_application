@@ -33,7 +33,7 @@ class AppTheme {
     // 🧾 TextField Theme
     inputDecorationTheme: InputDecorationTheme(
       filled: true,
-      fillColor: AppColors.textFieldFill,
+      fillColor: const Color.fromARGB(15, 255, 255, 255),
       hintStyle: const TextStyle(color: AppColors.textSecondary),
       prefixIconColor: AppColors.textSecondary,
 

@@ -1,59 +1,91 @@
 import 'package:flutter/material.dart';
-import 'widgets/gradient_background.dart';
+import 'Widgets/gradient_background.dart';
+import 'Widgets/responsive_layout.dart';
+import 'theme/app_colors.dart';
 
-class HomePage extends StatelessWidget {
-  const HomePage({super.key});
+class LoginPage extends StatelessWidget {
+  const LoginPage({super.key});
 
   @override
   Widget build(BuildContext context) {
     return GradientBackground(
-      child: Scaffold(
-        backgroundColor: Colors.transparent,
-
-        appBar: AppBar(
-          title: const Text("Theme Test Page"),
-          centerTitle: true,
-        ),
-
-        body: Padding(
-          padding: const EdgeInsets.all(20),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-
-              Text(
-                "Welcome to Lumin",
-                style: Theme.of(context).textTheme.headlineSmall,
+      child: ResponsiveLayout(
+        showAppBar: false, // لإعطاء مساحة أكبر للتصميم فوق الصورة
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            // العنوان الرئيسي بنفس نمط Lumin
+            const Text(
+              "Welcome to Lumin",
+              style: TextStyle(
+                color: AppColors.textPrimary,
+                fontSize: 28,
+                fontWeight: FontWeight.bold,
               ),
+              textAlign: TextAlign.center,
+            ),
+            
+            const SizedBox(height: 48),
 
-              const SizedBox(height: 24),
-
-              const TextField(
-                decoration: InputDecoration(
-                  hintText: "Email address",
-                  prefixIcon: Icon(Icons.email),
+            // حقل البريد الإلكتروني
+            TextField(
+              style: const TextStyle(color: AppColors.textPrimary),
+              decoration: InputDecoration(
+                hintText: "Email address",
+                hintStyle: const TextStyle(color: AppColors.textSecondary),
+                prefixIcon: const Icon(Icons.email, color: AppColors.textSecondary),
+                filled: true,
+                fillColor: Colors.white.withOpacity(0.05), // شفافية خفيفة لتناسب الخلفية
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                  borderSide: BorderSide.none,
                 ),
               ),
+            ),
 
-              const SizedBox(height: 16),
+            const SizedBox(height: 16),
 
-              const TextField(
-                obscureText: true,
-                decoration: InputDecoration(
-                  hintText: "Password",
-                  prefixIcon: Icon(Icons.lock),
-                  suffixIcon: Icon(Icons.visibility),
+            // حقل كلمة المرور
+            TextField(
+              obscureText: true,
+              style: const TextStyle(color: AppColors.textPrimary),
+              decoration: InputDecoration(
+                hintText: "Password",
+                hintStyle: const TextStyle(color: AppColors.textSecondary),
+                prefixIcon: const Icon(Icons.lock, color: AppColors.textSecondary),
+                suffixIcon: const Icon(Icons.visibility, color: AppColors.textSecondary),
+                filled: true,
+                fillColor: Colors.white.withOpacity(0.05),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                  borderSide: BorderSide.none,
                 ),
               ),
+            ),
 
-              const SizedBox(height: 24),
+            const SizedBox(height: 32),
 
-              ElevatedButton(
-                onPressed: () {},
-                child: const Text("Create Account"),
+            // زر إنشاء الحساب باستخدام لون AppColors.button
+            ElevatedButton(
+              onPressed: () {
+                // منطق تسجيل الدخول هنا
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: AppColors.button,
+                foregroundColor: Colors.white,
+                padding: const EdgeInsets.symmetric(vertical: 18),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                elevation: 0,
               ),
-            ],
-          ),
+              child: const Text(
+                "Create Account",
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+              ),
+            ),
+          ],
         ),
       ),
     );

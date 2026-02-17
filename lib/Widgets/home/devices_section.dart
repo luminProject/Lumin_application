@@ -1,7 +1,6 @@
-import 'dart:math';
 import 'package:flutter/material.dart';
 import '../../theme/app_colors.dart';
-import 'glass_card.dart';
+import 'device_card.dart';
 
 class DevicesSection extends StatefulWidget {
   final VoidCallback? onSeeAll;
@@ -123,124 +122,13 @@ class _RoomDevicesHorizontalList extends StatelessWidget {
         final d = devices[i];
         return SizedBox(
           width: 180,
-          child: _DeviceCard(title: d.title, value: d.value, active: d.active),
+          child: DeviceCard(
+            title: d.title,
+            value: d.value,
+            active: d.active,
+          ),
         );
       },
     );
   }
-}
-
-class _DeviceCard extends StatelessWidget {
-  final String title;
-  final String value;
-  final bool active;
-
-  const _DeviceCard({
-    required this.title,
-    required this.value,
-    required this.active,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    final accent = active ? AppColors.mint : Colors.white54;
-
-    return GlassCard(
-      radius: 20,
-      padding: const EdgeInsets.all(14),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              Container(
-                width: 36,
-                height: 36,
-                decoration: BoxDecoration(
-                  color: active ? AppColors.mint.withOpacity(0.18) : Colors.white10,
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: Icon(Icons.link, color: accent, size: 18),
-              ),
-              const Spacer(),
-              const Icon(Icons.more_horiz, color: Colors.white54),
-            ],
-          ),
-          const SizedBox(height: 10),
-
-          Text(
-            title,
-            style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w700),
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
-          ),
-
-          const SizedBox(height: 10),
-
-          Expanded(
-            child: active
-                ? Align(
-                    alignment: Alignment.centerLeft,
-                    child: SizedBox(
-                      height: 34,
-                      child: CustomPaint(
-                        painter: _WavePainter(color: AppColors.mint.withOpacity(0.95)),
-                        child: const SizedBox.expand(),
-                      ),
-                    ),
-                  )
-                : Align(
-                    alignment: Alignment.center,
-                    child: Container(
-                      height: 1,
-                      width: double.infinity,
-                      color: Colors.white24,
-                    ),
-                  ),
-          ),
-
-          Align(
-            alignment: Alignment.bottomRight,
-            child: Text(
-              value,
-              style: TextStyle(
-                fontSize: 14,
-                fontWeight: FontWeight.w800,
-                color: active ? AppColors.mint : Colors.white38,
-              ),
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class _WavePainter extends CustomPainter {
-  final Color color;
-  _WavePainter({required this.color});
-
-  @override
-  void paint(Canvas canvas, Size size) {
-    final paint = Paint()
-      ..color = color
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = 2.8
-      ..strokeCap = StrokeCap.round;
-
-    final path = Path();
-    final mid = size.height * 0.58;
-    path.moveTo(0, mid);
-
-    for (double x = 0; x <= size.width; x += 1) {
-      final y = mid + sin(x / 10) * (size.height * 0.22);
-      path.lineTo(x, y);
-    }
-    canvas.drawPath(path, paint);
-  }
-
-  @override
-  bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
 }

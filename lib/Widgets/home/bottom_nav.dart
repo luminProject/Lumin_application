@@ -1,17 +1,44 @@
 import 'package:flutter/material.dart';
 import 'package:lumin_application/Screens/bill_predection/bill_prediction.dart';
 import 'package:lumin_application/Screens/home/home_page.dart';
+import 'package:lumin_application/Screens/devices/device_management_page.dart';
 import '../../theme/app_colors.dart';
 
 class HomeBottomNav extends StatelessWidget {
-  final int currentIndex; // 0 = Home, 1 = Bill Prediction, ...
+  /// 0 = Home, 1 = Bill Prediction, 2 = Solar Forecast, 3 = Devices, 4 = Profile
+  final int currentIndex;
 
   const HomeBottomNav({super.key, required this.currentIndex});
 
-  void _goTo(BuildContext context, Widget page) {
-    Navigator.pushReplacement(
-      context,
-      MaterialPageRoute(builder: (_) => page),
+  void _goTo(BuildContext context, Widget page, int targetIndex) {
+    // اتجاه الانتقال حسب الtab
+    final forward = targetIndex > currentIndex;
+
+    Navigator.of(context).pushReplacement(_smoothRoute(page, forward: forward));
+  }
+
+  Route _smoothRoute(Widget page, {required bool forward}) {
+    return PageRouteBuilder(
+      transitionDuration: const Duration(milliseconds: 260),
+      reverseTransitionDuration: const Duration(milliseconds: 220),
+      pageBuilder: (_, __, ___) => page,
+      transitionsBuilder: (_, animation, __, child) {
+        final curved = CurvedAnimation(
+          parent: animation,
+          curve: Curves.easeOutCubic,
+          reverseCurve: Curves.easeInCubic,
+        );
+
+        // Slide بسيط يمين/يسار + Fade
+        final begin = Offset(forward ? 0.06 : -0.06, 0.0);
+        final slide = Tween<Offset>(begin: begin, end: Offset.zero).animate(curved);
+        final fade = Tween<double>(begin: 0.0, end: 1.0).animate(curved);
+
+        return SlideTransition(
+          position: slide,
+          child: FadeTransition(opacity: fade, child: child),
+        );
+      },
     );
   }
 
@@ -22,12 +49,30 @@ class HomeBottomNav extends StatelessWidget {
   }) {
     return InkWell(
       onTap: onTap,
-      borderRadius: BorderRadius.circular(12),
-      child: Padding(
-        padding: const EdgeInsets.all(6),
-        child: Icon(
-          icon,
-          color: active ? AppColors.mint : Colors.white54,
+      borderRadius: BorderRadius.circular(16),
+      child: SizedBox(
+        width: 54,
+        height: 46,
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(
+              icon,
+              size: 22,
+              color: active ? AppColors.mint : Colors.white54,
+            ),
+            const SizedBox(height: 6),
+            AnimatedContainer(
+              duration: const Duration(milliseconds: 180),
+              curve: Curves.easeOutCubic,
+              width: active ? 22 : 0,
+              height: 2.5,
+              decoration: BoxDecoration(
+                color: AppColors.mint,
+                borderRadius: BorderRadius.circular(99),
+              ),
+            ),
+          ],
         ),
       ),
     );
@@ -48,39 +93,40 @@ class HomeBottomNav extends StatelessWidget {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            // ✅ 1) Home
             _navItem(
               icon: Icons.home_rounded,
               active: currentIndex == 0,
               onTap: () {
-                if (currentIndex != 0) _goTo(context, const HomePage());
+                if (currentIndex != 0) _goTo(context, const HomePage(), 0);
               },
             ),
-
-            // ✅ 2) Bill Prediction
             _navItem(
-              icon: Icons.receipt_long_rounded, // تقدرين تغيّرينها لأي أيقونة تبينها
+              icon: Icons.receipt_long_rounded,
               active: currentIndex == 1,
               onTap: () {
-                if (currentIndex != 1) _goTo(context, const BillPredictionPage());
+                if (currentIndex != 1) _goTo(context, const BillPredictionPage(), 1);
               },
             ),
-
-            // باقي العناصر (Placeholder)
             _navItem(
-              icon: Icons.link,
+              icon: Icons.wb_sunny_rounded,
               active: currentIndex == 2,
-              onTap: () {},
+              onTap: () {
+                // TODO: _goTo(context, const SolarForecastPage(), 2);
+              },
             ),
             _navItem(
-              icon: Icons.link,
+              icon: Icons.devices_rounded,
               active: currentIndex == 3,
-              onTap: () {},
+              onTap: () {
+                if (currentIndex != 3) _goTo(context, const DeviceManagementPage(), 3);
+              },
             ),
             _navItem(
-              icon: Icons.link,
+              icon: Icons.person_rounded,
               active: currentIndex == 4,
-              onTap: () {},
+              onTap: () {
+                // TODO: _goTo(context, const ProfilePage(), 4);
+              },
             ),
           ],
         ),

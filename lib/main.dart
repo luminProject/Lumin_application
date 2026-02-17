@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:lumin_application/Screens/bill_predection/bill_prediction.dart';
 import 'package:lumin_application/Screens/home/home_page.dart';
 import 'package:lumin_application/Widgets/gradient_background.dart';
+import 'package:lumin_application/Screens/login.dart';
 import 'theme/app_theme.dart';
 
 void main() {
@@ -15,7 +17,8 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       theme: AppTheme.darkTheme,
-      home: const GradientBackground(child: HomePage()),
+      home: const LoginPage(),
+
     );
   }
 }

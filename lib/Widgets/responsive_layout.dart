@@ -2,44 +2,64 @@ import 'package:flutter/material.dart';
 
 class ResponsiveLayout extends StatelessWidget {
   final Widget child;
+
+  // AppBar options
   final bool showAppBar;
   final String? title;
+  final Widget? leading;
+  final List<Widget>? actions;
+
+  // Bottom nav (optional)
+  final Widget? bottomNavigationBar;
 
   const ResponsiveLayout({
     super.key,
     required this.child,
-    this.showAppBar = true,
+    this.showAppBar = false,
     this.title,
+    this.leading,
+    this.actions,
+    this.bottomNavigationBar,
   });
 
   @override
   Widget build(BuildContext context) {
-    // الحصول على أبعاد الشاشة
     final size = MediaQuery.of(context).size;
     final bool isMobile = size.width < 600;
 
     return Scaffold(
-      backgroundColor: Colors.transparent, // مهم لظهور الخلفية
-      extendBodyBehindAppBar: true, 
-      appBar: showAppBar 
+      backgroundColor: Colors.transparent,
+      extendBodyBehindAppBar: false,
+
+      // ✅ يظهر فقط إذا showAppBar = true
+      appBar: showAppBar
           ? AppBar(
-              title: Text(title ?? ""),
+              leading: leading,
+              title: Text(
+                title ?? '',
+                style: const TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.w900,
+                ),
+              ),
               centerTitle: true,
+              actions: actions,
               backgroundColor: Colors.transparent,
               elevation: 0,
               scrolledUnderElevation: 0,
             )
           : null,
+
+      bottomNavigationBar: bottomNavigationBar,
+
       body: Center(
         child: SingleChildScrollView(
-          // السماح بالتمرير عند ظهور لوحة المفاتيح
           child: Container(
             width: double.infinity,
-            constraints: const BoxConstraints(maxWidth: 1200), // أقصى عرض للتابلت
+            constraints: const BoxConstraints(maxWidth: 1200),
             padding: EdgeInsets.symmetric(
-              // حواف ديناميكية: 20 بكسل للجوال و 15% من العرض للأجهزة الكبيرة
-              horizontal: isMobile ? 20.0 : size.width * 0.15,
-              vertical: 20.0,
+              horizontal: isMobile ? 16.0 : size.width * 0.15,
+              vertical: 16.0,
             ),
             child: child,
           ),

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-
+import '../../Widgets/gradient_background.dart'; // ✅ أضفنا هذا
 import '../../Widgets/home/header.dart';
 import '../../Widgets/home/hero_house.dart';
 import '../../Widgets/home/solar_impact.dart';
@@ -16,46 +16,48 @@ class HomePage extends StatelessWidget {
     final devicesHeight = (w < 360) ? 168.0 : 158.0;
 
     return Scaffold(
-      backgroundColor: Colors.transparent,
-      body: SafeArea(
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.fromLTRB(16, 10, 16, 18),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const HomeHeader(),
-              const SizedBox(height: 12),
+      backgroundColor: Colors.transparent, // نخليها شفافة
+      body: GradientBackground( // ✅ لفّينا الصفحة بالخلفية
+        child: SafeArea(
+          child: SingleChildScrollView(
+            padding: const EdgeInsets.fromLTRB(16, 10, 16, 18),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const HomeHeader(),
+                const SizedBox(height: 12),
 
-              const HeroHouse(),
-              const SizedBox(height: 14),
+                const HeroHouse(),
+                const SizedBox(height: 14),
 
-              const Text(
-                'Solar Impact',
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.w700),
-              ),
-              const SizedBox(height: 10),
+                const Text(
+                  'Solar Impact',
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.w700),
+                ),
+                const SizedBox(height: 10),
 
-              const SolarImpactRow(),
-              const SizedBox(height: 16),
+                const SolarImpactRow(),
+                const SizedBox(height: 16),
 
-              DevicesSection(
-                height: devicesHeight,
-                onSeeAll: () {},
-              ),
-              const SizedBox(height: 16),
+                DevicesSection(
+                  height: devicesHeight,
+                  onSeeAll: () {},
+                ),
+                const SizedBox(height: 16),
 
-              const Text(
-                'Statistics',
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.w700),
-              ),
-              const SizedBox(height: 10),
+                const Text(
+                  'Statistics',
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.w700),
+                ),
+                const SizedBox(height: 10),
 
-              const StatsCardExact(),
-            ],
+                const StatsCardExact(),
+              ],
+            ),
           ),
         ),
       ),
-      bottomNavigationBar: const HomeBottomNav(),
+bottomNavigationBar: const HomeBottomNav(currentIndex: 0),
     );
   }
 }

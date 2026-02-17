@@ -2,6 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:lumin_application/Screens/bill_predection/bill_prediction.dart';
 import 'package:lumin_application/Screens/home/home_page.dart';
 import 'package:lumin_application/Screens/devices/device_management_page.dart';
+import 'package:lumin_application/Screens/solar%20forecast/solar_forecast.dart';
+
+// ✅ أضفنا هذا
+
 import '../../theme/app_colors.dart';
 
 class HomeBottomNav extends StatelessWidget {
@@ -11,9 +15,7 @@ class HomeBottomNav extends StatelessWidget {
   const HomeBottomNav({super.key, required this.currentIndex});
 
   void _goTo(BuildContext context, Widget page, int targetIndex) {
-    // اتجاه الانتقال حسب الtab
     final forward = targetIndex > currentIndex;
-
     Navigator.of(context).pushReplacement(_smoothRoute(page, forward: forward));
   }
 
@@ -29,7 +31,6 @@ class HomeBottomNav extends StatelessWidget {
           reverseCurve: Curves.easeInCubic,
         );
 
-        // Slide بسيط يمين/يسار + Fade
         final begin = Offset(forward ? 0.06 : -0.06, 0.0);
         final slide = Tween<Offset>(begin: begin, end: Offset.zero).animate(curved);
         final fade = Tween<double>(begin: 0.0, end: 1.0).animate(curved);
@@ -107,13 +108,16 @@ class HomeBottomNav extends StatelessWidget {
                 if (currentIndex != 1) _goTo(context, const BillPredictionPage(), 1);
               },
             ),
+
+            // ✅ هنا التعديل: الشمس تروح لصفحة SolarForecast
             _navItem(
               icon: Icons.wb_sunny_rounded,
               active: currentIndex == 2,
               onTap: () {
-                // TODO: _goTo(context, const SolarForecastPage(), 2);
+                if (currentIndex != 2) _goTo(context, const SolarForecastPage(), 2);
               },
             ),
+
             _navItem(
               icon: Icons.devices_rounded,
               active: currentIndex == 3,

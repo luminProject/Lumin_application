@@ -5,7 +5,6 @@ import 'package:lumin_application/Widgets/home/glass_card.dart';
 import 'package:lumin_application/Widgets/responsive_layout.dart';
 import 'package:lumin_application/theme/app_colors.dart';
 
-
 class BillPredictionPage extends StatefulWidget {
   const BillPredictionPage({super.key});
 
@@ -31,18 +30,19 @@ class _BillPredictionPageState extends State<BillPredictionPage> {
         actions: [
           IconButton(
             onPressed: () {},
-            icon: const Icon(Icons.notifications_none_rounded,color: AppColors.mint,),
+            icon: const Icon(
+              Icons.notifications_none_rounded,
+              color: AppColors.mint,
+            ),
           ),
         ],
 
         // ✅ Bottom nav
-bottomNavigationBar: const HomeBottomNav(currentIndex: 1),
+        bottomNavigationBar: const HomeBottomNav(currentIndex: 1),
 
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // ✅ تعويض لأن extendBodyBehindAppBar = true
-
             // ===== Monthly Bill Limit Card =====
             GlassCard(
               padding: const EdgeInsets.all(16),
@@ -59,7 +59,6 @@ bottomNavigationBar: const HomeBottomNav(currentIndex: 1),
                     ),
                   ),
                   const SizedBox(height: 12),
-
                   Container(
                     width: double.infinity,
                     padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 14),
@@ -77,9 +76,7 @@ bottomNavigationBar: const HomeBottomNav(currentIndex: 1),
                       ),
                     ),
                   ),
-
                   const SizedBox(height: 14),
-
                   SliderTheme(
                     data: SliderTheme.of(context).copyWith(
                       activeTrackColor: AppColors.button,
@@ -96,26 +93,43 @@ bottomNavigationBar: const HomeBottomNav(currentIndex: 1),
                       onChanged: (v) => setState(() => _billLimit = v),
                     ),
                   ),
-
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Text('200 SAR',
-                          style: TextStyle(color: Colors.white.withOpacity(0.60), fontSize: 11)),
-                      Text('800 SAR',
-                          style: TextStyle(color: Colors.white.withOpacity(0.60), fontSize: 11)),
+                      Text(
+                        '200 SAR',
+                        style: TextStyle(
+                          color: Colors.white.withOpacity(0.60),
+                          fontSize: 11,
+                        ),
+                      ),
+                      Text(
+                        '800 SAR',
+                        style: TextStyle(
+                          color: Colors.white.withOpacity(0.60),
+                          fontSize: 11,
+                        ),
+                      ),
                     ],
                   ),
-
                   const SizedBox(height: 10),
-
                   Row(
                     children: [
-                      Icon(Icons.bolt_rounded, size: 15, color: Colors.white.withOpacity(0.65)),
+                      Icon(
+                        Icons.bolt_rounded,
+                        size: 15,
+                        color: Colors.white.withOpacity(0.65),
+                      ),
                       const SizedBox(width: 6),
-                      Text(
-                        '≈ ${(_billLimit * 4).round()} kWh at 0.25 SAR/kWh',
-                        style: TextStyle(color: Colors.white.withOpacity(0.62), fontSize: 11.5),
+                      Flexible(
+                        child: Text(
+                          '≈ ${(_billLimit * 4).round()} kWh at 0.25 SAR/kWh',
+                          overflow: TextOverflow.ellipsis,
+                          style: TextStyle(
+                            color: Colors.white.withOpacity(0.62),
+                            fontSize: 11.5,
+                          ),
+                        ),
                       ),
                     ],
                   ),
@@ -138,8 +152,11 @@ bottomNavigationBar: const HomeBottomNav(currentIndex: 1),
                       color: Colors.white.withOpacity(0.08),
                       borderRadius: BorderRadius.circular(10),
                     ),
-                    child: Icon(Icons.warning_amber_rounded,
-                        color: Colors.orange.withOpacity(0.95), size: 22),
+                    child: Icon(
+                      Icons.warning_amber_rounded,
+                      color: Colors.orange.withOpacity(0.95),
+                      size: 22,
+                    ),
                   ),
                   const SizedBox(width: 12),
                   Expanded(
@@ -291,7 +308,9 @@ bottomNavigationBar: const HomeBottomNav(currentIndex: 1),
                 onPressed: () {},
                 style: OutlinedButton.styleFrom(
                   side: BorderSide(color: Colors.white.withOpacity(0.18)),
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(14),
+                  ),
                   backgroundColor: Colors.white.withOpacity(0.04),
                 ),
                 child: Text(
@@ -310,7 +329,7 @@ bottomNavigationBar: const HomeBottomNav(currentIndex: 1),
     );
   }
 
-  // ✅ Icons style مثل DevicesSection (mint tint)
+  // ✅ FIX: منع overflow على الأجهزة الصغيرة (بدون ما نخرب التصميم)
   Widget _miniStatCard({
     required IconData icon,
     required String title,
@@ -320,9 +339,10 @@ bottomNavigationBar: const HomeBottomNav(currentIndex: 1),
     return GlassCard(
       padding: const EdgeInsets.all(14),
       radius: 18,
-      child: SizedBox(
-        height: 78,
+      child: ConstrainedBox(
+        constraints: const BoxConstraints(minHeight: 78), // ✅ بدل SizedBox(height)
         child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Container(
               width: 36,
@@ -341,19 +361,24 @@ bottomNavigationBar: const HomeBottomNav(currentIndex: 1),
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisAlignment: MainAxisAlignment.center,
+                mainAxisSize: MainAxisSize.min, // ✅ مهم
                 children: [
                   Text(
                     title,
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
                     style: TextStyle(
                       color: Colors.white.withOpacity(0.72),
                       fontSize: 12,
                       fontWeight: FontWeight.w700,
+                      height: 1.2,
                     ),
                   ),
                   const SizedBox(height: 6),
                   Text(
                     value,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
                     style: const TextStyle(
                       color: Colors.white,
                       fontSize: 18,
@@ -363,6 +388,8 @@ bottomNavigationBar: const HomeBottomNav(currentIndex: 1),
                   const SizedBox(height: 4),
                   Text(
                     unit,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
                     style: TextStyle(
                       color: Colors.white.withOpacity(0.60),
                       fontSize: 11,

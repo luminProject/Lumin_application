@@ -1,15 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:lumin_application/Screens/bill_predection/bill_prediction.dart';
+import 'package:lumin_application/Screens/profile%20settings%20page/profile_settings_page.dart';
 import 'package:lumin_application/Screens/home/home_page.dart';
 import 'package:lumin_application/Screens/devices/device_management_page.dart';
 import 'package:lumin_application/Screens/solar%20forecast/solar_forecast.dart';
-
-// ✅ أضفنا هذا
-
 import '../../theme/app_colors.dart';
 
 class HomeBottomNav extends StatelessWidget {
-  /// 0 = Home, 1 = Bill Prediction, 2 = Solar Forecast, 3 = Devices, 4 = Profile
+  /// 0 = Home, 1 = Bill Prediction, 2 = Solar Forecast, 3 = Devices, 4 = Profile/Settings
   final int currentIndex;
 
   const HomeBottomNav({super.key, required this.currentIndex});
@@ -94,6 +92,7 @@ class HomeBottomNav extends StatelessWidget {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
+            // 0) Home
             _navItem(
               icon: Icons.home_rounded,
               active: currentIndex == 0,
@@ -101,6 +100,8 @@ class HomeBottomNav extends StatelessWidget {
                 if (currentIndex != 0) _goTo(context, const HomePage(), 0);
               },
             ),
+
+            // 1) Bill Prediction
             _navItem(
               icon: Icons.receipt_long_rounded,
               active: currentIndex == 1,
@@ -109,7 +110,7 @@ class HomeBottomNav extends StatelessWidget {
               },
             ),
 
-            // ✅ هنا التعديل: الشمس تروح لصفحة SolarForecast
+            // 2) Solar Forecast
             _navItem(
               icon: Icons.wb_sunny_rounded,
               active: currentIndex == 2,
@@ -118,6 +119,7 @@ class HomeBottomNav extends StatelessWidget {
               },
             ),
 
+            // 3) Devices
             _navItem(
               icon: Icons.devices_rounded,
               active: currentIndex == 3,
@@ -125,11 +127,13 @@ class HomeBottomNav extends StatelessWidget {
                 if (currentIndex != 3) _goTo(context, const DeviceManagementPage(), 3);
               },
             ),
+
+            // 4) Profile / Settings
             _navItem(
               icon: Icons.person_rounded,
               active: currentIndex == 4,
               onTap: () {
-                // TODO: _goTo(context, const ProfilePage(), 4);
+                if (currentIndex != 4) _goTo(context, const ProfileSettingsPage(), 4);
               },
             ),
           ],

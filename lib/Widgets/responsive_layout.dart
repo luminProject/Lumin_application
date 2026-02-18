@@ -38,7 +38,7 @@ class ResponsiveLayout extends StatelessWidget {
               title: Text(
                 title ?? '',
                 style: const TextStyle(
-                  fontSize: 18,
+                  fontSize:25,
                   fontWeight: FontWeight.w900,
                 ),
               ),

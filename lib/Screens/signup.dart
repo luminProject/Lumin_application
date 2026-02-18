@@ -3,6 +3,9 @@ import 'package:lumin_application/Screens/login.dart';
 import '../theme/app_colors.dart';
 import '../Widgets/gradient_background.dart';
 
+// ✅ NEW
+import 'package:intl_phone_field/intl_phone_field.dart';
+
 class SignupPage extends StatefulWidget {
   const SignupPage({super.key});
 
@@ -16,6 +19,9 @@ class _SignupPageState extends State<SignupPage> {
 
   String _energySource = 'Grid + Solar';
   bool _hasSolarPanels = true;
+
+  // ✅ (اختياري) نخزن الرقم النهائي هنا لو احتجتيه لاحقًا
+  String _fullPhone = '';
 
   static const double _gap12 = 12;
   static const double _gap16 = 20; // ✅ (التعديل الأول) كانت 16
@@ -112,13 +118,31 @@ class _SignupPageState extends State<SignupPage> {
                       ),
                       const SizedBox(height: _gap16),
 
+                      // ✅✅✅ Phone field (flag + country code) — ONLY CHANGE HERE
                       _field(
-                        TextField(
-                          keyboardType: TextInputType.phone,
+                        IntlPhoneField(
+                          initialCountryCode: 'SA',
+                          disableLengthCheck: true,
+                          cursorColor: AppColors.button,
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontWeight: FontWeight.w700,
+                          ),
+                          dropdownTextStyle: const TextStyle(
+                            color: Colors.white,
+                            fontWeight: FontWeight.w700,
+                          ),
+                          dropdownIcon: Icon(
+                            Icons.keyboard_arrow_down,
+                            color: Colors.white.withOpacity(0.6),
+                          ),
                           decoration: const InputDecoration(
                             hintText: 'Phone number',
                             prefixIcon: Icon(Icons.phone_outlined),
                           ),
+                          onChanged: (phone) {
+                            _fullPhone = phone.completeNumber;
+                          },
                         ),
                       ),
                       const SizedBox(height: _gap16),
@@ -229,9 +253,7 @@ class _SignupPageState extends State<SignupPage> {
         height: 48,
         padding: const EdgeInsets.symmetric(horizontal: 14),
         decoration: BoxDecoration(
-          color: isSelected
-              ? AppColors.button.withOpacity(0.22)
-              : Colors.white.withOpacity(0.06),
+          color: isSelected ? AppColors.button.withOpacity(0.22) : Colors.white.withOpacity(0.06),
           borderRadius: BorderRadius.circular(12),
           border: Border.all(
             color: isSelected ? AppColors.button : Colors.transparent,
@@ -284,9 +306,7 @@ class _SignupPageState extends State<SignupPage> {
                   child: Container(
                     height: 40,
                     decoration: BoxDecoration(
-                      color: _hasSolarPanels
-                          ? AppColors.button
-                          : Colors.white.withOpacity(0.10),
+                      color: _hasSolarPanels ? AppColors.button : Colors.white.withOpacity(0.10),
                       borderRadius: BorderRadius.circular(10),
                     ),
                     alignment: Alignment.center,
@@ -304,9 +324,7 @@ class _SignupPageState extends State<SignupPage> {
                   child: Container(
                     height: 40,
                     decoration: BoxDecoration(
-                      color: !_hasSolarPanels
-                          ? AppColors.button
-                          : Colors.white.withOpacity(0.10),
+                      color: !_hasSolarPanels ? AppColors.button : Colors.white.withOpacity(0.10),
                       borderRadius: BorderRadius.circular(10),
                     ),
                     alignment: Alignment.center,

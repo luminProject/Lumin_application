@@ -112,21 +112,30 @@ class _RoomDevicesHorizontalList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ListView.separated(
-      scrollDirection: Axis.horizontal,
-      physics: const BouncingScrollPhysics(),
-      padding: const EdgeInsets.only(bottom: 2),
-      itemCount: devices.length,
-      separatorBuilder: (_, __) => const SizedBox(width: 12),
-      itemBuilder: (_, i) {
-        final d = devices[i];
-        return SizedBox(
-          width: 180,
-          child: DeviceCard(
-            title: d.title,
-            value: d.value,
-            active: d.active,
-          ),
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        const gap = 12.0;
+
+        // ✅ يخلي كرتين يعبّون العرض (بدون فراغ يمين)
+        final itemWidth = (constraints.maxWidth - gap) / 2;
+
+        return ListView.separated(
+          scrollDirection: Axis.horizontal,
+          physics: const BouncingScrollPhysics(),
+          padding: const EdgeInsets.only(bottom: 2),
+          itemCount: devices.length,
+          separatorBuilder: (_, __) => const SizedBox(width: gap),
+          itemBuilder: (_, i) {
+            final d = devices[i];
+            return SizedBox(
+              width: itemWidth,
+              child: DeviceCard(
+                title: d.title,
+                value: d.value,
+                active: d.active,
+              ),
+            );
+          },
         );
       },
     );

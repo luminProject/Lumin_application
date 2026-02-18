@@ -51,7 +51,7 @@ class _BillPredictionPageState extends State<BillPredictionPage> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    'Monthly Bill Limit (SAR)',
+                    'Monthly Bill Limit (﷼)',
                     style: TextStyle(
                       color: Colors.white.withOpacity(0.80),
                       fontSize: 13.5,
@@ -97,14 +97,14 @@ class _BillPredictionPageState extends State<BillPredictionPage> {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text(
-                        '200 SAR',
+                        '200 ﷼',
                         style: TextStyle(
                           color: Colors.white.withOpacity(0.60),
                           fontSize: 11,
                         ),
                       ),
                       Text(
-                        '800 SAR',
+                        '800 ﷼',
                         style: TextStyle(
                           color: Colors.white.withOpacity(0.60),
                           fontSize: 11,
@@ -123,7 +123,7 @@ class _BillPredictionPageState extends State<BillPredictionPage> {
                       const SizedBox(width: 6),
                       Flexible(
                         child: Text(
-                          '≈ ${(_billLimit * 4).round()} kWh at 0.25 SAR/kWh',
+                          '≈ ${(_billLimit * 4).round()} kWh at 0.25 ﷼/kWh',
                           overflow: TextOverflow.ellipsis,
                           style: TextStyle(
                             color: Colors.white.withOpacity(0.62),
@@ -211,7 +211,7 @@ class _BillPredictionPageState extends State<BillPredictionPage> {
                     icon: Icons.attach_money_rounded,
                     title: 'Expected Cost',
                     value: '480',
-                    unit: 'SAR this month',
+                    unit: '﷼ this month',
                   ),
                 ),
               ],
@@ -269,9 +269,9 @@ class _BillPredictionPageState extends State<BillPredictionPage> {
                         ),
                         const SizedBox(height: 10),
                         Text(
-                          'Your predicted bill is 30 SAR over the limit.\n'
+                          'Your predicted bill is 30 ﷼ over the limit.\n'
                           'Consider optimizing your AC schedule between\n'
-                          '2–5 PM to save up to 30 SAR monthly.',
+                          '2–5 PM to save up to 30 ﷼ monthly.',
                           style: TextStyle(
                             color: Colors.white.withOpacity(0.74),
                             fontSize: 12.5,
@@ -340,7 +340,7 @@ class _BillPredictionPageState extends State<BillPredictionPage> {
       padding: const EdgeInsets.all(14),
       radius: 18,
       child: ConstrainedBox(
-        constraints: const BoxConstraints(minHeight: 78), // ✅ بدل SizedBox(height)
+        constraints: const BoxConstraints(minHeight: 78),
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -361,7 +361,7 @@ class _BillPredictionPageState extends State<BillPredictionPage> {
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisSize: MainAxisSize.min, // ✅ مهم
+                mainAxisSize: MainAxisSize.min,
                 children: [
                   Text(
                     title,

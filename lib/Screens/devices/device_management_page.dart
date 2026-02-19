@@ -16,11 +16,12 @@ class DeviceManagementPage extends StatefulWidget {
 class _DeviceManagementPageState extends State<DeviceManagementPage> {
   int _filter = 0; // 0=All, 1=Connected, 2=Disconnected
 
-  final List<DeviceItem> _devices = const [
-    DeviceItem(name: 'Master Bedroom AC', value: 'kWh 34', connected: true, running: false),
-    DeviceItem(name: 'Master Bedroom AC', value: 'kWh 34', connected: true, running: true),
-    DeviceItem(name: 'Master Bedroom AC', value: 'kWh 34', connected: true, running: true),
-    DeviceItem(name: 'Master Bedroom AC', value: 'kWh 34', connected: false, running: false),
+  // ✅ لازم مو const عشان نقدر نحذف
+  final List<DeviceItem> _devices = [
+    DeviceItem(id: 'SENSOR-AC-01', name: 'Master Bedroom AC', value: '34 kWh', connected: true, running: false),
+    DeviceItem(id: 'SENSOR-AC-02', name: 'Living Room AC', value: '7.2 kW', connected: true, running: true),
+    DeviceItem(id: 'SENSOR-TV-01', name: 'Living Room TV', value: '0.0 kW', connected: true, running: false),
+    DeviceItem(id: 'SENSOR-PLUG-01', name: 'Smart Plug', value: '—', connected: false, running: false),
   ];
 
   @override
@@ -62,9 +63,8 @@ class _DeviceManagementPageState extends State<DeviceManagementPage> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const SizedBox(height: 52), // compensate transparent appbar
+                const SizedBox(height: 52),
 
-                // ===== Stats (NO inner boxes) =====
                 GlassCard(
                   radius: 18,
                   padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
@@ -93,7 +93,6 @@ class _DeviceManagementPageState extends State<DeviceManagementPage> {
 
                 const SizedBox(height: 12),
 
-                // ===== Filters + Add =====
                 Row(
                   children: [
                     _FilterChip(
@@ -138,7 +137,6 @@ class _DeviceManagementPageState extends State<DeviceManagementPage> {
 
                 const SizedBox(height: 12),
 
-                // ===== Devices list (same card as Home) =====
                 if (filtered.isEmpty)
                   GlassCard(
                     radius: 18,
@@ -170,13 +168,24 @@ class _DeviceManagementPageState extends State<DeviceManagementPage> {
                         value: d.value,
                         active: d.connected,
                         running: d.running,
-                        onMenu: () {},
+
+                        // ✅ menu actions
+                        onSettings: () {
+                          // TODO: افتحي صفحة إعدادات الجهاز
+                          // Navigator.push(context, MaterialPageRoute(builder: (_) => DeviceSetupPage(deviceId: d.id)));
+                        },
+                        onDelete: () {
+                          setState(() {
+                            _devices.removeWhere((x) => x.id == d.id);
+                          });
+                        },
+
                         onLink: () {},
                       ),
                     );
                   }),
 
-                const SizedBox(height: 90), // so last card isn't hidden behind bottom nav
+                const SizedBox(height: 90),
               ],
             ),
           ),
@@ -189,12 +198,14 @@ class _DeviceManagementPageState extends State<DeviceManagementPage> {
 }
 
 class DeviceItem {
+  final String id;
   final String name;
   final String value;
   final bool connected;
   final bool running;
 
-  const DeviceItem({
+  DeviceItem({
+    required this.id,
     required this.name,
     required this.value,
     required this.connected,

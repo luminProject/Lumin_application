@@ -8,6 +8,7 @@ import '../../Widgets/home/solar_impact.dart';
 import '../../Widgets/home/devices_section.dart';
 import '../../Widgets/home/stats_card.dart';
 import '../../Widgets/home/bottom_nav.dart';
+import '../devices/device_management_page.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
@@ -19,19 +20,14 @@ class HomePage extends StatelessWidget {
 
     return GradientBackground(
       child: ResponsiveLayout(
-        // ✅ ما نبي AppBar فوق (عشان ما يصير تكرار)
         showAppBar: false,
-
-        // ✅ Bottom nav ثابت
         bottomNavigationBar: const HomeBottomNav(currentIndex: 0),
 
-        // ✅ نفس padding القديم + نزّل الهيدر شوي
         child: SingleChildScrollView(
           padding: const EdgeInsets.fromLTRB(16, 10, 16, 18),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // ✅ يخلي الهيدر ما يلصق فوق عند الكاميرا/الستاتس بار
               SizedBox(height: MediaQuery.of(context).padding.top * 0.25),
 
               const HomeHeader(),
@@ -51,7 +47,14 @@ class HomePage extends StatelessWidget {
 
               DevicesSection(
                 height: devicesHeight,
-                onSeeAll: () {},
+                onSeeAll: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => const DeviceManagementPage(),
+                    ),
+                  );
+                },
               ),
               const SizedBox(height: 16),
 
@@ -69,4 +72,3 @@ class HomePage extends StatelessWidget {
     );
   }
 }
-

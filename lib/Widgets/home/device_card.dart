@@ -1,4 +1,6 @@
 import 'dart:math';
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
 import '../../theme/app_colors.dart';
 import 'glass_card.dart';
@@ -8,11 +10,13 @@ class DeviceCard extends StatelessWidget {
   final String value;
   final bool active;
 
-  // للـDevices page
   final bool running;
   final bool fullWidth;
   final VoidCallback? onMenu;
   final VoidCallback? onLink;
+
+  final VoidCallback? onSettings;
+  final VoidCallback? onDelete;
 
   const DeviceCard({
     super.key,
@@ -23,109 +27,331 @@ class DeviceCard extends StatelessWidget {
     this.fullWidth = false,
     this.onMenu,
     this.onLink,
+    this.onSettings,
+    this.onDelete,
   });
+
+ void _openMenuSheet(BuildContext context) {
+  showModalBottomSheet(
+    context: context,
+    backgroundColor: Colors.transparent,
+    isScrollControlled: false, // ✅ يفتح على طول حسب المحتوى
+    useSafeArea: true,
+    barrierColor: Colors.black.withOpacity(0.45),
+    builder: (_) {
+      return _GlassMenuSheet(
+        title: title,
+        onSettings: () {
+          Navigator.of(context).pop();
+          onSettings?.call();
+        },
+        onDelete: () {
+          Navigator.of(context).pop();
+          onDelete?.call();
+        },
+      );
+    },
+  );
+}
 
   @override
   Widget build(BuildContext context) {
     final accent = active ? AppColors.mint : Colors.white54;
 
-    // نفس الكارد يشتغل للهوم (tight) ولصفحة devices (full)
-    final waveHeight = fullWidth ? 34.0 : 22.0;
-    final rowGap = fullWidth ? 10.0 : 8.0;
-    final titleGap = fullWidth ? 10.0 : 8.0;
+    return LayoutBuilder(
+      builder: (context, c) {
+        // ✅ scale يعتمد على العرض + الارتفاع (عشان كروت الهوم الصغيرة)
+        final w = c.maxWidth.isFinite ? c.maxWidth : 170.0;
+        final scaleW = (w / 170.0).clamp(0.82, 1.12);
 
-    return GlassCard(
-      radius: 20,
-      padding: const EdgeInsets.all(14),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisSize: MainAxisSize.min, // ✅ مهم عشان ما يحاول يتمدد عمودي
-        children: [
-          Row(
-            children: [
-              InkWell(
-                onTap: onLink,
-                borderRadius: BorderRadius.circular(12),
-                child: Container(
-                  width: 36,
-                  height: 36,
-                  decoration: BoxDecoration(
-                    color: active ? AppColors.mint.withOpacity(0.18) : Colors.white10,
-                    borderRadius: BorderRadius.circular(12),
+        final hasFiniteH = c.maxHeight.isFinite && c.maxHeight > 0;
+        final h = hasFiniteH ? c.maxHeight : 140.0;
+        final scaleH = hasFiniteH ? (h / 140.0).clamp(0.78, 1.10) : 1.0;
+
+        final scale = min(scaleW, scaleH);
+
+        final pad = 14.0 * scale;
+        final icon = 36.0 * scale;
+
+        // ✅ خففنا شوية للقيد بالارتفاع
+        final waveHeight = (fullWidth ? 34.0 : 20.0) * scale;
+        final rowGap = (fullWidth ? 10.0 : 7.0) * scale;
+        final titleGap = (fullWidth ? 10.0 : 7.0) * scale;
+        final bottomGap = (fullWidth ? 8.0 : 6.0) * scale;
+
+        // ✅ مكان status ثابت في fullWidth فقط
+        final statusHeight = fullWidth ? (16.0 * scale) : 0.0;
+
+        // ✅ في كروت الهوم (fullWidth=false) عندنا ارتفاع محدد غالبًا، فنخليه يملأ الارتفاع ويستخدم Spacer
+        final useTightHeight = (!fullWidth && hasFiniteH);
+
+        final content = Column(
+          mainAxisSize: useTightHeight ? MainAxisSize.max : MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                InkWell(
+                  onTap: onLink,
+                  borderRadius: BorderRadius.circular(12 * scale),
+                  child: Container(
+                    width: icon,
+                    height: icon,
+                    decoration: BoxDecoration(
+                      color: active ? AppColors.mint.withOpacity(0.18) : Colors.white10,
+                      borderRadius: BorderRadius.circular(12 * scale),
+                    ),
+                    child: Icon(Icons.link, color: accent, size: 18 * scale),
                   ),
-                  child: Icon(Icons.link, color: accent, size: 18),
+                ),
+                const Spacer(),
+                InkWell(
+                  onTap: () {
+                    if (onMenu != null) {
+                      onMenu!.call();
+                    } else {
+                      _openMenuSheet(context);
+                    }
+                  },
+                  borderRadius: BorderRadius.circular(12 * scale),
+                  child: Padding(
+                    padding: EdgeInsets.all(6 * scale),
+                    child: Icon(Icons.more_horiz, color: Colors.white54, size: 22 * scale),
+                  ),
+                ),
+              ],
+            ),
+
+            SizedBox(height: rowGap),
+
+            Text(
+              title,
+              style: TextStyle(fontSize: 14 * scale, fontWeight: FontWeight.w700),
+              maxLines: fullWidth ? 2 : 1,
+              overflow: TextOverflow.ellipsis,
+            ),
+
+            SizedBox(height: titleGap),
+
+            // ✅ نفس ارتفاع الموجة دائمًا
+            SizedBox(
+              height: waveHeight,
+              width: double.infinity,
+              child: active
+                  ? ClipRect(
+                      child: CustomPaint(
+                        painter: _WavePainter(
+                          color: AppColors.mint.withOpacity(0.95),
+                          strokeWidth: 2.6 * scale,
+                        ),
+                        child: const SizedBox.expand(),
+                      ),
+                    )
+                  : Align(
+                      alignment: Alignment.center,
+                      child: Container(
+                        height: 1,
+                        width: double.infinity,
+                        color: Colors.white24,
+                      ),
+                    ),
+            ),
+
+            SizedBox(height: bottomGap),
+
+            if (fullWidth)
+              SizedBox(
+                height: statusHeight,
+                child: Align(
+                  alignment: Alignment.centerLeft,
+                  child: Text(
+                    active ? (running ? 'Connected • Running' : 'Connected') : 'Disconnected',
+                    style: TextStyle(
+                      fontSize: 11 * scale,
+                      fontWeight: FontWeight.w700,
+                      color: active ? AppColors.mint : Colors.white38,
+                    ),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
                 ),
               ),
-              const Spacer(),
-              InkWell(
-                onTap: onMenu,
-                borderRadius: BorderRadius.circular(12),
-                child: const Padding(
-                  padding: EdgeInsets.all(6),
-                  child: Icon(Icons.more_horiz, color: Colors.white54),
+
+            // ✅ بس لكروت الهوم: ادفعي القيمة لتحت (بدون ما نستخدمه في fullWidth عشان ScrollView)
+            if (useTightHeight) const Spacer(),
+
+            Align(
+              alignment: Alignment.centerRight,
+              child: FittedBox(
+                fit: BoxFit.scaleDown,
+                alignment: Alignment.centerRight,
+                child: Text(
+                  value,
+                  style: TextStyle(
+                    fontSize: 14 * scale,
+                    fontWeight: FontWeight.w800,
+                    color: active ? AppColors.mint : Colors.white38,
+                  ),
+                  maxLines: 1,
                 ),
               ),
+            ),
+          ],
+        );
+
+        return GlassCard(
+          radius: 20,
+          padding: EdgeInsets.all(pad),
+          child: useTightHeight ? SizedBox(height: c.maxHeight, child: content) : content,
+        );
+      },
+    );
+  }
+}
+
+class _GlassMenuSheet extends StatelessWidget {
+  final String title;
+  final VoidCallback onSettings;
+  final VoidCallback onDelete;
+
+  const _GlassMenuSheet({
+    required this.title,
+    required this.onSettings,
+    required this.onDelete,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final bottomInset = MediaQuery.of(context).padding.bottom;
+
+    return SafeArea(
+      top: false,
+      child: Padding(
+        // ✅ يطلع فوق شوي + يحترم SafeArea تحت
+        padding: EdgeInsets.fromLTRB(16, 0, 16, 26 + bottomInset),
+        child: Material(
+          type: MaterialType.transparency,
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(22),
+            child: BackdropFilter(
+              filter: ImageFilter.blur(sigmaX: 14, sigmaY: 14),
+              child: Container(
+                // ✅ نفس اللون القديم
+                decoration: BoxDecoration(
+                  color: Colors.white.withOpacity(0.08),
+                  borderRadius: BorderRadius.circular(22),
+                  border: Border.all(color: Colors.white12),
+                ),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min, // ✅ يخليها تطلع كاملة من أول ضغطه
+                  children: [
+                    const SizedBox(height: 12),
+                    Container(
+                      width: 50,
+                      height: 5,
+                      decoration: BoxDecoration(
+                        color: Colors.white.withOpacity(0.22),
+                        borderRadius: BorderRadius.circular(99),
+                      ),
+                    ),
+                    const SizedBox(height: 14),
+
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(16, 0, 16, 10),
+                      child: Row(
+                        children: [
+                          Expanded(
+                            child: Text(
+                              title,
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              style: const TextStyle(
+                                color: Colors.white,
+                                fontWeight: FontWeight.w900,
+                                fontSize: 14.5,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+
+                    _menuTile(
+                      icon: Icons.settings_rounded,
+                      text: 'Device settings',
+                      iconColor: Colors.white.withOpacity(0.85),
+                      textColor: Colors.white.withOpacity(0.92),
+                      trailing: Icons.chevron_right_rounded,
+                      onTap: onSettings,
+                      height: 56,
+                    ),
+
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 16),
+                      child: Divider(
+                        color: Colors.white.withOpacity(0.12),
+                        height: 18,
+                      ),
+                    ),
+
+                    _menuTile(
+                      icon: Icons.delete_rounded,
+                      text: 'Delete',
+                      iconColor: const Color(0xFFFF5A52),
+                      textColor: const Color(0xFFFF5A52),
+                      onTap: onDelete,
+                      height: 56,
+                    ),
+
+                    const SizedBox(height: 14),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _menuTile({
+    required IconData icon,
+    required String text,
+    required Color iconColor,
+    required Color textColor,
+    IconData? trailing,
+    required VoidCallback onTap,
+    double height = 52,
+  }) {
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(16),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+        child: Container(
+          height: height,
+          padding: const EdgeInsets.symmetric(horizontal: 14),
+          // ✅ نفس لون بلاطات قبل
+          decoration: BoxDecoration(
+            color: Colors.white.withOpacity(0.06),
+            borderRadius: BorderRadius.circular(16),
+            border: Border.all(color: Colors.white.withOpacity(0.10)),
+          ),
+          child: Row(
+            children: [
+              Icon(icon, color: iconColor, size: 21),
+              const SizedBox(width: 10),
+              Expanded(
+                child: Text(
+                  text,
+                  style: TextStyle(color: textColor, fontWeight: FontWeight.w800),
+                ),
+              ),
+              if (trailing != null)
+                Icon(trailing, color: Colors.white.withOpacity(0.40), size: 22),
             ],
           ),
-
-          SizedBox(height: rowGap),
-
-          Text(
-            title,
-            style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w700),
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
-          ),
-
-          SizedBox(height: titleGap),
-
-          // ✅ مكان الموجة/الخط ثابت، ما فيه Flexible
-          active
-              ? SizedBox(
-                  height: waveHeight,
-                  width: double.infinity,
-                  child: CustomPaint(
-                    painter: _WavePainter(color: AppColors.mint.withOpacity(0.95)),
-                    child: const SizedBox.expand(),
-                  ),
-                )
-              : Container(
-                  height: 1,
-                  width: double.infinity,
-                  color: Colors.white24,
-                ),
-
-          if (fullWidth) ...[
-            const SizedBox(height: 8),
-            Text(
-              active ? (running ? 'Connected • Running' : 'Connected') : 'Disconnected',
-              style: TextStyle(
-                fontSize: 11,
-                fontWeight: FontWeight.w700,
-                color: active ? AppColors.mint : Colors.white38,
-              ),
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-            ),
-            const SizedBox(height: 6),
-          ] else ...[
-            const SizedBox(height: 8),
-          ],
-
-          Align(
-            alignment: Alignment.centerRight,
-            child: Text(
-              value,
-              style: TextStyle(
-                fontSize: 14,
-                fontWeight: FontWeight.w800,
-                color: active ? AppColors.mint : Colors.white38,
-              ),
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-            ),
-          ),
-        ],
+        ),
       ),
     );
   }
@@ -133,27 +359,36 @@ class DeviceCard extends StatelessWidget {
 
 class _WavePainter extends CustomPainter {
   final Color color;
-  _WavePainter({required this.color});
+  final double strokeWidth;
+
+  _WavePainter({required this.color, required this.strokeWidth});
 
   @override
   void paint(Canvas canvas, Size size) {
     final paint = Paint()
       ..color = color
       ..style = PaintingStyle.stroke
-      ..strokeWidth = 2.8
+      ..strokeWidth = strokeWidth
       ..strokeCap = StrokeCap.round;
 
-    final path = Path();
-    final mid = size.height * 0.58;
-    path.moveTo(0, mid);
+    final inset = strokeWidth / 2;
+    final usableH = max(0.0, size.height - (inset * 2));
+    final usableW = max(0.0, size.width - (inset * 2));
 
-    for (double x = 0; x <= size.width; x += 1) {
-      final y = mid + sin(x / 10) * (size.height * 0.22);
-      path.lineTo(x, y);
+    final mid = inset + usableH * 0.58;
+    final amp = usableH * 0.18;
+
+    final path = Path()..moveTo(inset, mid);
+    for (double x = 0; x <= usableW; x += 1) {
+      final y = mid + sin(x / 10) * amp;
+      path.lineTo(inset + x, y);
     }
+
     canvas.drawPath(path, paint);
   }
 
   @override
-  bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
+  bool shouldRepaint(covariant _WavePainter old) {
+    return old.color != color || old.strokeWidth != strokeWidth;
+  }
 }

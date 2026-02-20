@@ -46,32 +46,34 @@ class HomeBottomNav extends StatelessWidget {
     required bool active,
     required VoidCallback onTap,
   }) {
+    // ✅ بدون width ثابت — نخليه يتمدد عبر Expanded
     return InkWell(
       onTap: onTap,
       borderRadius: BorderRadius.circular(16),
       child: SizedBox(
-        width: 54,
         height: 46,
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(
-              icon,
-              size: 22,
-              color: active ? AppColors.mint : Colors.white54,
-            ),
-            const SizedBox(height: 6),
-            AnimatedContainer(
-              duration: const Duration(milliseconds: 180),
-              curve: Curves.easeOutCubic,
-              width: active ? 22 : 0,
-              height: 2.5,
-              decoration: BoxDecoration(
-                color: AppColors.mint,
-                borderRadius: BorderRadius.circular(99),
+        child: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(
+                icon,
+                size: 22,
+                color: active ? AppColors.mint : Colors.white54,
               ),
-            ),
-          ],
+              const SizedBox(height: 6),
+              AnimatedContainer(
+                duration: const Duration(milliseconds: 180),
+                curve: Curves.easeOutCubic,
+                width: active ? 22 : 0,
+                height: 2.5,
+                decoration: BoxDecoration(
+                  color: AppColors.mint,
+                  borderRadius: BorderRadius.circular(99),
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -82,59 +84,60 @@ class HomeBottomNav extends StatelessWidget {
     return SafeArea(
       top: false,
       child: Container(
-        margin: const EdgeInsets.fromLTRB(16, 0, 16, 10),
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+        // ✅ خففنا شوي عشان ما يضيق على الشاشات الصغيرة
+        margin: const EdgeInsets.fromLTRB(14, 0, 14, 10),
+        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
         decoration: BoxDecoration(
           color: Colors.white10,
           borderRadius: BorderRadius.circular(20),
           border: Border.all(color: Colors.white12),
         ),
         child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            // 0) Home
-            _navItem(
-              icon: Icons.home_rounded,
-              active: currentIndex == 0,
-              onTap: () {
-                if (currentIndex != 0) _goTo(context, const HomePage(), 0);
-              },
+            Expanded(
+              child: _navItem(
+                icon: Icons.home_rounded,
+                active: currentIndex == 0,
+                onTap: () {
+                  if (currentIndex != 0) _goTo(context, const HomePage(), 0);
+                },
+              ),
             ),
-
-            // 1) Bill Prediction
-            _navItem(
-              icon: Icons.receipt_long_rounded,
-              active: currentIndex == 1,
-              onTap: () {
-                if (currentIndex != 1) _goTo(context, const BillPredictionPage(), 1);
-              },
+            Expanded(
+              child: _navItem(
+                icon: Icons.receipt_long_rounded,
+                active: currentIndex == 1,
+                onTap: () {
+                  if (currentIndex != 1) _goTo(context, const BillPredictionPage(), 1);
+                },
+              ),
             ),
-
-            // 2) Solar Forecast
-            _navItem(
-              icon: Icons.wb_sunny_rounded,
-              active: currentIndex == 2,
-              onTap: () {
-                if (currentIndex != 2) _goTo(context, const SolarForecastPage(), 2);
-              },
+            Expanded(
+              child: _navItem(
+                icon: Icons.wb_sunny_rounded,
+                active: currentIndex == 2,
+                onTap: () {
+                  if (currentIndex != 2) _goTo(context, const SolarForecastPage(), 2);
+                },
+              ),
             ),
-
-            // 3) Devices
-            _navItem(
-              icon: Icons.devices_rounded,
-              active: currentIndex == 3,
-              onTap: () {
-                if (currentIndex != 3) _goTo(context, const DeviceManagementPage(), 3);
-              },
+            Expanded(
+              child: _navItem(
+                icon: Icons.devices_rounded,
+                active: currentIndex == 3,
+                onTap: () {
+                  if (currentIndex != 3) _goTo(context, const DeviceManagementPage(), 3);
+                },
+              ),
             ),
-
-            // 4) Profile / Settings
-            _navItem(
-              icon: Icons.person_rounded,
-              active: currentIndex == 4,
-              onTap: () {
-                if (currentIndex != 4) _goTo(context, const ProfileSettingsPage(), 4);
-              },
+            Expanded(
+              child: _navItem(
+                icon: Icons.person_rounded,
+                active: currentIndex == 4,
+                onTap: () {
+                  if (currentIndex != 4) _goTo(context, const ProfileSettingsPage(), 4);
+                },
+              ),
             ),
           ],
         ),

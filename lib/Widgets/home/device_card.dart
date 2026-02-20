@@ -31,28 +31,27 @@ class DeviceCard extends StatelessWidget {
     this.onDelete,
   });
 
- void _openMenuSheet(BuildContext context) {
-  showModalBottomSheet(
-    context: context,
-    backgroundColor: Colors.transparent,
-    isScrollControlled: false, // ✅ يفتح على طول حسب المحتوى
-    useSafeArea: true,
-    barrierColor: Colors.black.withOpacity(0.45),
-    builder: (_) {
-      return _GlassMenuSheet(
-        title: title,
-        onSettings: () {
-          Navigator.of(context).pop();
-          onSettings?.call();
-        },
-        onDelete: () {
-          Navigator.of(context).pop();
-          onDelete?.call();
-        },
-      );
-    },
-  );
-}
+  void _openMenuSheet(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Colors.transparent,
+      useSafeArea: true,
+      barrierColor: Colors.black.withOpacity(0.45),
+      builder: (_) {
+        return _GlassMenuSheet(
+          title: title,
+          onSettings: () {
+            Navigator.of(context).pop();
+            onSettings?.call();
+          },
+          onDelete: () {
+            Navigator.of(context).pop();
+            onDelete?.call();
+          },
+        );
+      },
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -60,106 +59,157 @@ class DeviceCard extends StatelessWidget {
 
     return LayoutBuilder(
       builder: (context, c) {
-        // ✅ scale يعتمد على العرض + الارتفاع (عشان كروت الهوم الصغيرة)
         final w = c.maxWidth.isFinite ? c.maxWidth : 170.0;
-        final scaleW = (w / 170.0).clamp(0.82, 1.12);
-
         final hasFiniteH = c.maxHeight.isFinite && c.maxHeight > 0;
-        final h = hasFiniteH ? c.maxHeight : 140.0;
-        final scaleH = hasFiniteH ? (h / 140.0).clamp(0.78, 1.10) : 1.0;
+        final h = hasFiniteH ? c.maxHeight : 160.0;
 
-        final scale = min(scaleW, scaleH);
+        // ✅ scale حسب العرض (ثابت) + tight mode لما الكرت قصير
+        final scale = (w / 170.0).clamp(0.78, 1.10);
+        final isHomeTight = (!fullWidth && hasFiniteH && h <= 126.0);
 
-        final pad = 14.0 * scale;
-        final icon = 36.0 * scale;
+        // ✅ شدّ كل شيء شوي إذا الكرت صغير جدًا
+        final pad = (isHomeTight ? 10.0 : 14.0) * scale;
+        final icon = (isHomeTight ? 32.0 : 36.0) * scale;
 
-        // ✅ خففنا شوية للقيد بالارتفاع
-        final waveHeight = (fullWidth ? 34.0 : 20.0) * scale;
-        final rowGap = (fullWidth ? 10.0 : 7.0) * scale;
-        final titleGap = (fullWidth ? 10.0 : 7.0) * scale;
-        final bottomGap = (fullWidth ? 8.0 : 6.0) * scale;
+        final rowGap = (isHomeTight ? 4.0 : (fullWidth ? 10.0 : 7.0)) * scale;
+        final titleGap = (isHomeTight ? 4.0 : (fullWidth ? 10.0 : 7.0)) * scale;
 
-        // ✅ مكان status ثابت في fullWidth فقط
+        final waveHeight = (fullWidth ? 34.0 : (isHomeTight ? 16.0 : 22.0)) * scale;
         final statusHeight = fullWidth ? (16.0 * scale) : 0.0;
 
-        // ✅ في كروت الهوم (fullWidth=false) عندنا ارتفاع محدد غالبًا، فنخليه يملأ الارتفاع ويستخدم Spacer
-        final useTightHeight = (!fullWidth && hasFiniteH);
+        final valueFont = (isHomeTight ? 12.5 : 14.0) * scale;
 
-        final content = Column(
-          mainAxisSize: useTightHeight ? MainAxisSize.max : MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              children: [
-                InkWell(
-                  onTap: onLink,
-                  borderRadius: BorderRadius.circular(12 * scale),
-                  child: Container(
-                    width: icon,
-                    height: icon,
-                    decoration: BoxDecoration(
-                      color: active ? AppColors.mint.withOpacity(0.18) : Colors.white10,
-                      borderRadius: BorderRadius.circular(12 * scale),
-                    ),
-                    child: Icon(Icons.link, color: accent, size: 18 * scale),
+        // ======= الجزء العلوي (مشترك)
+        Widget headerRow() {
+          return Row(
+            children: [
+              InkWell(
+                onTap: onLink,
+                borderRadius: BorderRadius.circular(12 * scale),
+                child: Container(
+                  width: icon,
+                  height: icon,
+                  decoration: BoxDecoration(
+                    color: active ? AppColors.mint.withOpacity(0.18) : Colors.white10,
+                    borderRadius: BorderRadius.circular(12 * scale),
                   ),
+                  child: Icon(Icons.link, color: accent, size: 18 * scale),
                 ),
-                const Spacer(),
-                InkWell(
-                  onTap: () {
-                    if (onMenu != null) {
-                      onMenu!.call();
-                    } else {
-                      _openMenuSheet(context);
-                    }
-                  },
-                  borderRadius: BorderRadius.circular(12 * scale),
-                  child: Padding(
-                    padding: EdgeInsets.all(6 * scale),
-                    child: Icon(Icons.more_horiz, color: Colors.white54, size: 22 * scale),
-                  ),
+              ),
+              const Spacer(),
+              InkWell(
+                onTap: () {
+                  if (onMenu != null) {
+                    onMenu!.call();
+                  } else {
+                    _openMenuSheet(context);
+                  }
+                },
+                borderRadius: BorderRadius.circular(12 * scale),
+                child: Padding(
+                  padding: EdgeInsets.all((isHomeTight ? 4 : 6) * scale),
+                  child: Icon(Icons.more_horiz, color: Colors.white54, size: 22 * scale),
                 ),
-              ],
-            ),
+              ),
+            ],
+          );
+        }
 
-            SizedBox(height: rowGap),
-
-            Text(
-              title,
-              style: TextStyle(fontSize: 14 * scale, fontWeight: FontWeight.w700),
-              maxLines: fullWidth ? 2 : 1,
-              overflow: TextOverflow.ellipsis,
-            ),
-
-            SizedBox(height: titleGap),
-
-            // ✅ نفس ارتفاع الموجة دائمًا
-            SizedBox(
-              height: waveHeight,
-              width: double.infinity,
-              child: active
-                  ? ClipRect(
-                      child: CustomPaint(
-                        painter: _WavePainter(
-                          color: AppColors.mint.withOpacity(0.95),
-                          strokeWidth: 2.6 * scale,
-                        ),
-                        child: const SizedBox.expand(),
+        Widget waveOrLine() {
+          return SizedBox(
+            height: waveHeight,
+            width: double.infinity,
+            child: active
+                ? ClipRect(
+                    child: CustomPaint(
+                      painter: _WavePainter(
+                        color: AppColors.mint.withOpacity(0.95),
+                        strokeWidth: 2.6 * scale,
                       ),
-                    )
-                  : Align(
-                      alignment: Alignment.center,
-                      child: Container(
-                        height: 1,
-                        width: double.infinity,
-                        color: Colors.white24,
-                      ),
+                      child: const SizedBox.expand(),
                     ),
+                  )
+                : Align(
+                    alignment: Alignment.center,
+                    child: Container(
+                      height: 1,
+                      width: double.infinity,
+                      color: Colors.white24,
+                    ),
+                  ),
+          );
+        }
+
+        Widget valueWidget() {
+          return Align(
+            alignment: Alignment.centerRight,
+            child: FittedBox(
+              fit: BoxFit.scaleDown,
+              alignment: Alignment.centerRight,
+              child: Text(
+                value,
+                style: TextStyle(
+                  fontSize: valueFont,
+                  fontWeight: FontWeight.w800,
+                  color: active ? AppColors.mint : Colors.white38,
+                ),
+                maxLines: 1,
+              ),
             ),
+          );
+        }
 
-            SizedBox(height: bottomGap),
+        // ✅ Layout A: للهوم (ارتفاع محدود) — نستخدم Expanded بأمان
+        Widget homeLayout() {
+          return Column(
+            mainAxisSize: MainAxisSize.max,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              headerRow(),
+              SizedBox(height: rowGap),
 
-            if (fullWidth)
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      title,
+                      style: TextStyle(fontSize: 14 * scale, fontWeight: FontWeight.w700),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                    SizedBox(height: titleGap),
+                    waveOrLine(),
+                  ],
+                ),
+              ),
+
+              valueWidget(),
+            ],
+          );
+        }
+
+        // ✅ Layout B: للـ fullWidth داخل Scroll (ارتفاع غير محدود) — بدون Expanded نهائيًا
+        Widget fullWidthLayout() {
+          return Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              headerRow(),
+              SizedBox(height: rowGap),
+
+              Text(
+                title,
+                style: TextStyle(fontSize: 14 * scale, fontWeight: FontWeight.w700),
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+              ),
+
+              SizedBox(height: titleGap),
+              waveOrLine(),
+
+              SizedBox(height: 8 * scale),
+
               SizedBox(
                 height: statusHeight,
                 child: Align(
@@ -177,32 +227,22 @@ class DeviceCard extends StatelessWidget {
                 ),
               ),
 
-            // ✅ بس لكروت الهوم: ادفعي القيمة لتحت (بدون ما نستخدمه في fullWidth عشان ScrollView)
-            if (useTightHeight) const Spacer(),
+              SizedBox(height: 8 * scale),
+              valueWidget(),
+            ],
+          );
+        }
 
-            Align(
-              alignment: Alignment.centerRight,
-              child: FittedBox(
-                fit: BoxFit.scaleDown,
-                alignment: Alignment.centerRight,
-                child: Text(
-                  value,
-                  style: TextStyle(
-                    fontSize: 14 * scale,
-                    fontWeight: FontWeight.w800,
-                    color: active ? AppColors.mint : Colors.white38,
-                  ),
-                  maxLines: 1,
-                ),
-              ),
-            ),
-          ],
-        );
+        final child = fullWidth
+            ? fullWidthLayout()
+            : (hasFiniteH ? homeLayout() : fullWidthLayout()); // fallback آمن
 
         return GlassCard(
           radius: 20,
           padding: EdgeInsets.all(pad),
-          child: useTightHeight ? SizedBox(height: c.maxHeight, child: content) : content,
+          child: ClipRect( // ✅ يمنع أي بكسلات زيادة تسبب تحذير
+            child: child,
+          ),
         );
       },
     );
@@ -227,7 +267,6 @@ class _GlassMenuSheet extends StatelessWidget {
     return SafeArea(
       top: false,
       child: Padding(
-        // ✅ يطلع فوق شوي + يحترم SafeArea تحت
         padding: EdgeInsets.fromLTRB(16, 0, 16, 26 + bottomInset),
         child: Material(
           type: MaterialType.transparency,
@@ -236,14 +275,13 @@ class _GlassMenuSheet extends StatelessWidget {
             child: BackdropFilter(
               filter: ImageFilter.blur(sigmaX: 14, sigmaY: 14),
               child: Container(
-                // ✅ نفس اللون القديم
                 decoration: BoxDecoration(
                   color: Colors.white.withOpacity(0.08),
                   borderRadius: BorderRadius.circular(22),
                   border: Border.all(color: Colors.white12),
                 ),
                 child: Column(
-                  mainAxisSize: MainAxisSize.min, // ✅ يخليها تطلع كاملة من أول ضغطه
+                  mainAxisSize: MainAxisSize.min,
                   children: [
                     const SizedBox(height: 12),
                     Container(
@@ -255,7 +293,6 @@ class _GlassMenuSheet extends StatelessWidget {
                       ),
                     ),
                     const SizedBox(height: 14),
-
                     Padding(
                       padding: const EdgeInsets.fromLTRB(16, 0, 16, 10),
                       child: Row(
@@ -275,7 +312,6 @@ class _GlassMenuSheet extends StatelessWidget {
                         ],
                       ),
                     ),
-
                     _menuTile(
                       icon: Icons.settings_rounded,
                       text: 'Device settings',
@@ -285,15 +321,10 @@ class _GlassMenuSheet extends StatelessWidget {
                       onTap: onSettings,
                       height: 56,
                     ),
-
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 16),
-                      child: Divider(
-                        color: Colors.white.withOpacity(0.12),
-                        height: 18,
-                      ),
+                      child: Divider(color: Colors.white.withOpacity(0.12), height: 18),
                     ),
-
                     _menuTile(
                       icon: Icons.delete_rounded,
                       text: 'Delete',
@@ -302,7 +333,6 @@ class _GlassMenuSheet extends StatelessWidget {
                       onTap: onDelete,
                       height: 56,
                     ),
-
                     const SizedBox(height: 14),
                   ],
                 ),
@@ -331,7 +361,6 @@ class _GlassMenuSheet extends StatelessWidget {
         child: Container(
           height: height,
           padding: const EdgeInsets.symmetric(horizontal: 14),
-          // ✅ نفس لون بلاطات قبل
           decoration: BoxDecoration(
             color: Colors.white.withOpacity(0.06),
             borderRadius: BorderRadius.circular(16),

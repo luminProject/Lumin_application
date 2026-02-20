@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:lumin_application/Screens/login.dart';
+import 'package:lumin_application/Screens/splash/splash_page.dart';
 import 'theme/app_theme.dart';
 
 void main() {
@@ -14,7 +15,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       theme: AppTheme.darkTheme,
-      home: const LoginPage(),
+      home: const SplashPage(),
 
     );
   }

@@ -16,24 +16,69 @@ class DeviceManagementPage extends StatefulWidget {
 class _DeviceManagementPageState extends State<DeviceManagementPage> {
   int _filter = 0; // 0=All, 1=Connected, 2=Disconnected
 
-  // ✅ لازم مو const عشان نقدر نحذف
   final List<DeviceItem> _devices = [
-    DeviceItem(id: 'SENSOR-AC-01', name: 'Master Bedroom AC', value: '34 kWh', connected: true, running: false),
-    DeviceItem(id: 'SENSOR-AC-02', name: 'Living Room AC', value: '7.2 kW', connected: true, running: true),
-    DeviceItem(id: 'SENSOR-TV-01', name: 'Living Room TV', value: '0.0 kW', connected: true, running: false),
-    DeviceItem(id: 'SENSOR-PLUG-01', name: 'Smart Plug', value: '—', connected: false, running: false),
+    const DeviceItem(name: 'Master Bedroom AC', value: '34 kWh', connected: true, running: false),
+    const DeviceItem(name: 'Living Room AC', value: '21 kWh', connected: true, running: true),
+    const DeviceItem(name: 'Kitchen Fridge', value: '12 kWh', connected: true, running: true),
+    const DeviceItem(name: 'Living Room TV', value: '0.0 kW', connected: false, running: false),
   ];
+
+  List<DeviceItem> get _filtered {
+    return _devices.where((d) {
+      if (_filter == 1) return d.connected;
+      if (_filter == 2) return !d.connected;
+      return true;
+    }).toList();
+  }
+
+  Future<void> _confirmDelete(DeviceItem d) async {
+    // ✅ مهم: استخدمي context الحالي قبل أي pop
+    final result = await showDialog<bool>(
+      context: context,
+      barrierDismissible: true,
+      builder: (ctx) {
+        return AlertDialog(
+          backgroundColor: const Color(0xFF0F1F2A),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(18)),
+          title: const Text(
+            'Delete device?',
+            style: TextStyle(color: Colors.white, fontWeight: FontWeight.w900),
+          ),
+          content: Text(
+            'This will remove "${d.name}" from your devices list.',
+            style: TextStyle(color: Colors.white.withOpacity(0.75), fontWeight: FontWeight.w600),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(ctx).pop(false),
+              child: Text('Cancel', style: TextStyle(color: Colors.white.withOpacity(0.70))),
+            ),
+            ElevatedButton(
+              onPressed: () => Navigator.of(ctx).pop(true),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: const Color(0xFFFF5A52),
+                elevation: 0,
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+              ),
+              child: const Text('Delete', style: TextStyle(fontWeight: FontWeight.w900)),
+            ),
+          ],
+        );
+      },
+    );
+
+    if (result != true) return;
+    if (!mounted) return;
+
+    setState(() => _devices.remove(d));
+  }
 
   @override
   Widget build(BuildContext context) {
     final connectedCount = _devices.where((d) => d.connected).length;
     final disconnectedCount = _devices.length - connectedCount;
 
-    final filtered = _devices.where((d) {
-      if (_filter == 1) return d.connected;
-      if (_filter == 2) return !d.connected;
-      return true;
-    }).toList();
+    final filtered = _filtered;
 
     return GradientBackground(
       child: Scaffold(
@@ -63,8 +108,9 @@ class _DeviceManagementPageState extends State<DeviceManagementPage> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const SizedBox(height: 52),
+                const SizedBox(height: 52), // compensate transparent appbar
 
+                // ===== Stats =====
                 GlassCard(
                   radius: 18,
                   padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
@@ -93,26 +139,37 @@ class _DeviceManagementPageState extends State<DeviceManagementPage> {
 
                 const SizedBox(height: 12),
 
+                // ===== Filters + Add (✅ no right overflow) =====
                 Row(
                   children: [
-                    _FilterChip(
-                      text: 'All',
-                      selected: _filter == 0,
-                      onTap: () => setState(() => _filter = 0),
+                    Expanded(
+                      child: SingleChildScrollView(
+                        scrollDirection: Axis.horizontal,
+                        physics: const BouncingScrollPhysics(),
+                        child: Row(
+                          children: [
+                            _FilterChip(
+                              text: 'All',
+                              selected: _filter == 0,
+                              onTap: () => setState(() => _filter = 0),
+                            ),
+                            const SizedBox(width: 8),
+                            _FilterChip(
+                              text: 'Connected',
+                              selected: _filter == 1,
+                              onTap: () => setState(() => _filter = 1),
+                            ),
+                            const SizedBox(width: 8),
+                            _FilterChip(
+                              text: 'Disconnected',
+                              selected: _filter == 2,
+                              onTap: () => setState(() => _filter = 2),
+                            ),
+                          ],
+                        ),
+                      ),
                     ),
-                    const SizedBox(width: 8),
-                    _FilterChip(
-                      text: 'Connected',
-                      selected: _filter == 1,
-                      onTap: () => setState(() => _filter = 1),
-                    ),
-                    const SizedBox(width: 8),
-                    _FilterChip(
-                      text: 'Disconnected',
-                      selected: _filter == 2,
-                      onTap: () => setState(() => _filter = 2),
-                    ),
-                    const Spacer(),
+                    const SizedBox(width: 10),
                     SizedBox(
                       height: 38,
                       child: ElevatedButton.icon(
@@ -137,6 +194,7 @@ class _DeviceManagementPageState extends State<DeviceManagementPage> {
 
                 const SizedBox(height: 12),
 
+                // ===== Devices list =====
                 if (filtered.isEmpty)
                   GlassCard(
                     radius: 18,
@@ -168,29 +226,23 @@ class _DeviceManagementPageState extends State<DeviceManagementPage> {
                         value: d.value,
                         active: d.connected,
                         running: d.running,
-
-                        // ✅ menu actions
+                        // المنيو من الثلاث نقاط داخل الكارد
                         onSettings: () {
-                          // TODO: افتحي صفحة إعدادات الجهاز
-                          // Navigator.push(context, MaterialPageRoute(builder: (_) => DeviceSetupPage(deviceId: d.id)));
+                          // روحي لصفحة إعدادات الجهاز عندك
+                          // Navigator.push(context, MaterialPageRoute(builder: (_) => DeviceSetupPage(device: d)));
                         },
-                        onDelete: () {
-                          setState(() {
-                            _devices.removeWhere((x) => x.id == d.id);
-                          });
-                        },
-
-                        onLink: () {},
+                        onDelete: () => _confirmDelete(d),
                       ),
                     );
                   }),
 
-                const SizedBox(height: 90),
+                const SizedBox(height: 100), // ✅ مساحة كفاية عشان ما يختفي آخر كرت تحت الـ bottom nav
               ],
             ),
           ),
         ),
 
+        // ✅ مهم: استخدمي النسخة المعدلة من HomeBottomNav اللي تعالج overflow
         bottomNavigationBar: const HomeBottomNav(currentIndex: 3),
       ),
     );
@@ -198,14 +250,12 @@ class _DeviceManagementPageState extends State<DeviceManagementPage> {
 }
 
 class DeviceItem {
-  final String id;
   final String name;
   final String value;
   final bool connected;
   final bool running;
 
-  DeviceItem({
-    required this.id,
+  const DeviceItem({
     required this.name,
     required this.value,
     required this.connected,

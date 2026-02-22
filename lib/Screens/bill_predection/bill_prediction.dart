@@ -349,7 +349,7 @@ class _BillPredictionPageState extends State<BillPredictionPage> {
               child: ElevatedButton(
                 onPressed: _openSetBillLimitSheet,
                 child: const Text(
-                  'Adjust Usage',
+                  'Set Bill Limit',
                   style: TextStyle(fontSize: 15.5, fontWeight: FontWeight.w900),
                 ),
               ),

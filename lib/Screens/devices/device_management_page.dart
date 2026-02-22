@@ -5,6 +5,8 @@ import 'package:lumin_application/Widgets/home/bottom_nav.dart';
 import 'package:lumin_application/Widgets/home/device_card.dart';
 import 'package:lumin_application/Widgets/home/glass_card.dart';
 import 'package:lumin_application/theme/app_colors.dart';
+import 'package:lumin_application/Recomendation/notificationspage.dart';
+
 
 class DeviceManagementPage extends StatefulWidget {
   const DeviceManagementPage({super.key});
@@ -96,7 +98,12 @@ class _DeviceManagementPageState extends State<DeviceManagementPage> {
           ),
           actions: [
             IconButton(
-              onPressed: () {},
+              onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (_) => const NotificationsPage()),
+              );
+            },
               icon: const Icon(Icons.notifications_none_rounded, color: AppColors.mint),
             ),
           ],

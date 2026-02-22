@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:lumin_application/Recomendation/notificationspage.dart';
+import 'package:lumin_application/Screens/profile%20settings%20page/about_lumin_page.dart';
+import 'package:lumin_application/Screens/profile%20settings%20page/change_password_page.dart';
 import 'package:lumin_application/Screens/profile%20settings%20page/edit_profile_page.dart';
+import 'package:lumin_application/Screens/profile%20settings%20page/privacy_page.dart';
 import 'package:lumin_application/Widgets/gradient_background.dart';
 import 'package:lumin_application/Widgets/responsive_layout.dart';
 import 'package:lumin_application/Widgets/home/bottom_nav.dart';
@@ -22,7 +26,12 @@ class ProfileSettingsPage extends StatelessWidget {
         // ✅ (اختياري) جرس مثل باقي الصفحات
         actions: [
           IconButton(
-            onPressed: () {},
+            onPressed: () {
+  Navigator.push(
+    context,
+    MaterialPageRoute(builder: (_) => const NotificationsPage()),
+  );
+},
             icon: const Icon(
               Icons.notifications_none_rounded,
               color: AppColors.mint,
@@ -37,7 +46,7 @@ class ProfileSettingsPage extends StatelessWidget {
           padding: const EdgeInsets.only(top: 2),
           child: Column(
             children: [
-              const SizedBox(height: 5),
+              const SizedBox(height:125),
 
               _settingsTile(
                 context,
@@ -57,9 +66,12 @@ class ProfileSettingsPage extends StatelessWidget {
                 context,
                 icon: Icons.lock_rounded,
                 title: 'Change Password',
-                onTap: () {
-                  // TODO: Navigator.push(... ChangePasswordPage)
-                },
+                 onTap: () {
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (_) => const ChangePasswordPage()),
+    );
+  },
               ),
               const SizedBox(height: 15),
 
@@ -67,9 +79,12 @@ class ProfileSettingsPage extends StatelessWidget {
                 context,
                 icon: Icons.info_rounded,
                 title: 'About LUMIN',
-                onTap: () {
-                  // TODO: Navigator.push(... AboutPage)
-                },
+                 onTap: () {
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (_) => const AboutLuminPage()),
+    );
+  },
               ),
               const SizedBox(height: 15),
 
@@ -78,6 +93,10 @@ class ProfileSettingsPage extends StatelessWidget {
                 icon: Icons.privacy_tip_rounded,
                 title: 'Privacy',
                 onTap: () {
+                    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (_) => const PrivacyPage()),
+    );
                   // TODO: Navigator.push(... PrivacyPage)
                 },
               ),

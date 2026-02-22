@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:lumin_application/Recomendation/notificationspage.dart';
 import '../../theme/app_colors.dart';
 
 class HomeHeader extends StatelessWidget {
@@ -21,7 +22,13 @@ class HomeHeader extends StatelessWidget {
           ),
         ),
         IconButton(
-          onPressed: () {},
+                 onPressed: () {
+  Navigator.push(
+    context,
+    MaterialPageRoute(builder: (_) => const NotificationsPage()),
+  );
+},
+   
           icon: const Icon(Icons.notifications_none_rounded, color: AppColors.mint),
         ),
       ],

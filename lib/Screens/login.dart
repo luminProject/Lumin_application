@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:lumin_application/Screens/home/home_page.dart';
 import 'package:lumin_application/Screens/signup.dart';
+
+import '../Widgets/gradient_background.dart';
 import '../theme/app_colors.dart';
-import '../Widgets/gradient_background.dart'; // ✅ هذا الملف لازم يكون فيه الكود الجديد
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -21,7 +22,7 @@ class _LoginPageState extends State<LoginPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: GradientBackground( // ✅ بيستخدم الكود الجديد تلقائيًا
+      body: GradientBackground(
         child: SafeArea(
           child: Center(
             child: SingleChildScrollView(
@@ -36,6 +37,7 @@ class _LoginPageState extends State<LoginPage> {
                     fit: BoxFit.contain,
                   ),
 
+                  const SizedBox(height: 20),
 
                   // Title
                   const Text(
@@ -87,8 +89,16 @@ class _LoginPageState extends State<LoginPage> {
                   _field(
                     TextField(
                       keyboardType: TextInputType.emailAddress,
+                      style: const TextStyle(
+                        color: Colors.white, // ✅ النص أبيض
+                        fontWeight: FontWeight.w600,
+                      ),
+                      cursorColor: Colors.white, // ✅ المؤشر أبيض
                       decoration: const InputDecoration(
                         hintText: 'Email address',
+                        hintStyle: TextStyle(
+                          color: Colors.white54,
+                        ),
                         prefixIcon: Icon(Icons.email_outlined),
                       ),
                     ),
@@ -100,8 +110,16 @@ class _LoginPageState extends State<LoginPage> {
                   _field(
                     TextField(
                       obscureText: _obscurePassword,
+                      style: const TextStyle(
+                        color: Colors.white, // ✅ النص أبيض
+                        fontWeight: FontWeight.w600,
+                      ),
+                      cursorColor: Colors.white, // ✅ المؤشر أبيض
                       decoration: InputDecoration(
                         hintText: 'Password',
+                        hintStyle: const TextStyle(
+                          color: Colors.white54,
+                        ),
                         prefixIcon: const Icon(Icons.lock_outline),
                         suffixIcon: IconButton(
                           onPressed: () =>
@@ -110,7 +128,9 @@ class _LoginPageState extends State<LoginPage> {
                             _obscurePassword
                                 ? Icons.visibility_off_outlined
                                 : Icons.visibility_outlined,
-                            color: _obscurePassword ? null : AppColors.button,
+                            color: _obscurePassword
+                                ? Colors.white54
+                                : AppColors.button,
                           ),
                         ),
                       ),
@@ -119,7 +139,7 @@ class _LoginPageState extends State<LoginPage> {
 
                   const SizedBox(height: _gap12),
 
-                  // Forgot password? Click here
+                  // Forgot password
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
@@ -156,15 +176,14 @@ class _LoginPageState extends State<LoginPage> {
                   // Button
                   SizedBox(
                     width: double.infinity,
-                    height: 52,
+                    height: 55,
                     child: ElevatedButton(
                       onPressed: () {
-  Navigator.pushReplacement(
-    context,
-    MaterialPageRoute(builder: (_) => const HomePage()),
-  );
-},
-
+                        Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(builder: (_) => const HomePage()),
+                        );
+                      },
                       child: const Text(
                         'Log In',
                         style: TextStyle(

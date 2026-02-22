@@ -31,14 +31,13 @@ class ResponsiveLayout extends StatelessWidget {
       backgroundColor: Colors.transparent,
       extendBodyBehindAppBar: false,
 
-      // ✅ يظهر فقط إذا showAppBar = true
       appBar: showAppBar
           ? AppBar(
               leading: leading,
               title: Text(
                 title ?? '',
                 style: const TextStyle(
-                  fontSize:25,
+                  fontSize: 25,
                   fontWeight: FontWeight.w900,
                 ),
               ),
@@ -52,7 +51,9 @@ class ResponsiveLayout extends StatelessWidget {
 
       bottomNavigationBar: bottomNavigationBar,
 
-      body: Center(
+      // ✅ بدل Center عشان ما يوسّط المحتوى ويعمل فراغ فوق
+      body: Align(
+        alignment: Alignment.topCenter,
         child: SingleChildScrollView(
           child: Container(
             width: double.infinity,

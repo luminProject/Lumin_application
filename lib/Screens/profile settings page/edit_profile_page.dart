@@ -53,7 +53,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
 
         child: Column(
           children: [
-            const SizedBox(height: 8),
+            const SizedBox(height:125),
 
             // ===== Avatar =====
             _avatarSection(),

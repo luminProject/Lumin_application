@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:lumin_application/Recomendation/notificationspage.dart';
 import 'package:lumin_application/Screens/bill_predection/bill_prediction.dart';
 import 'package:lumin_application/Widgets/gradient_background.dart';
 import 'package:lumin_application/Widgets/responsive_layout.dart';
@@ -21,7 +22,12 @@ class SolarForecastPage extends StatelessWidget {
         leading: const SizedBox(width: 48), // نخلي العنوان بالوسط مثل الصورة
         actions: [
           IconButton(
-            onPressed: () {},
+            onPressed: () {
+  Navigator.push(
+    context,
+    MaterialPageRoute(builder: (_) => const NotificationsPage()),
+  );
+},
             icon: const Icon(
               Icons.notifications_none_rounded,
               color: AppColors.mint,

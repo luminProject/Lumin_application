@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:lumin_application/Recomendation/notificationspage.dart';
 import 'package:lumin_application/Widgets/gradient_background.dart';
 import 'package:lumin_application/Widgets/home/bottom_nav.dart';
 import 'package:lumin_application/Widgets/home/glass_card.dart';
@@ -16,6 +17,114 @@ class _BillPredictionPageState extends State<BillPredictionPage> {
   double _billLimit = 341;
   bool _overLimitAlert = true;
 
+  final TextEditingController _billLimitController = TextEditingController();
+
+  @override
+  void dispose() {
+    _billLimitController.dispose();
+    super.dispose();
+  }
+
+  void _openSetBillLimitSheet() {
+    _billLimitController.text = _billLimit.round().toString();
+
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+
+      // ✅ صار غامق وواضح
+      backgroundColor: const Color(0xFF1C2B2D),
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(28)),
+      ),
+
+      builder: (ctx) {
+        return Container(
+          padding: EdgeInsets.only(
+            left: 20,
+            right: 20,
+            top: 20,
+            bottom: MediaQuery.of(ctx).viewInsets.bottom + 20,
+          ),
+          decoration: const BoxDecoration(
+            color: Color(0xFF1C2B2D),
+            borderRadius: BorderRadius.vertical(top: Radius.circular(28)),
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Text(
+                'Set Bill Limit',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontWeight: FontWeight.w900,
+                  fontSize: 16,
+                ),
+              ),
+              const SizedBox(height: 10),
+              Text(
+                'Enter your monthly bill limit (﷼)',
+                style: TextStyle(
+                  color: Colors.white.withOpacity(0.70),
+                  fontSize: 12.5,
+                  fontWeight: FontWeight.w700,
+                ),
+              ),
+              const SizedBox(height: 12),
+              TextField(
+                controller: _billLimitController,
+                keyboardType: TextInputType.number,
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontWeight: FontWeight.w800,
+                ),
+                cursorColor: Colors.white,
+                decoration: InputDecoration(
+                  hintText: 'e.g. 450',
+                  hintStyle: TextStyle(color: Colors.white.withOpacity(0.35)),
+                  filled: true,
+                  fillColor: Colors.white.withOpacity(0.08),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(14),
+                    borderSide: BorderSide(color: Colors.white.withOpacity(0.10)),
+                  ),
+                  enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(14),
+                    borderSide: BorderSide(color: Colors.white.withOpacity(0.10)),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(14),
+                    borderSide: BorderSide(color: Colors.white.withOpacity(0.25)),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 14),
+              SizedBox(
+                width: double.infinity,
+                height: 52,
+                child: ElevatedButton(
+                  onPressed: () {
+                    final raw = _billLimitController.text.trim();
+                    final value = double.tryParse(raw);
+                    if (value == null) return;
+
+                    setState(() => _billLimit = value);
+                    Navigator.pop(ctx);
+                  },
+                  child: const Text(
+                    'Set Bill',
+                    style: TextStyle(fontSize: 15.5, fontWeight: FontWeight.w900),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return GradientBackground(
@@ -23,13 +132,14 @@ class _BillPredictionPageState extends State<BillPredictionPage> {
         // ✅ AppBar ثابت
         showAppBar: true,
         title: 'Bill Prediction',
-        leading: IconButton(
-          onPressed: () => Navigator.pop(context),
-          icon: const Icon(Icons.arrow_back_ios_new_rounded, color: Colors.white),
-        ),
         actions: [
           IconButton(
-            onPressed: () {},
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (_) => const NotificationsPage()),
+              );
+            },
             icon: const Icon(
               Icons.notifications_none_rounded,
               color: AppColors.mint,
@@ -43,6 +153,7 @@ class _BillPredictionPageState extends State<BillPredictionPage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            SizedBox(height:30 ),
             // ===== Monthly Bill Limit Card =====
             GlassCard(
               padding: const EdgeInsets.all(16),
@@ -75,63 +186,6 @@ class _BillPredictionPageState extends State<BillPredictionPage> {
                         fontWeight: FontWeight.w900,
                       ),
                     ),
-                  ),
-                  const SizedBox(height: 14),
-                  SliderTheme(
-                    data: SliderTheme.of(context).copyWith(
-                      activeTrackColor: AppColors.button,
-                      inactiveTrackColor: Colors.white.withOpacity(0.20),
-                      thumbColor: AppColors.button,
-                      overlayColor: AppColors.button.withOpacity(0.15),
-                      trackHeight: 4,
-                      thumbShape: const RoundSliderThumbShape(enabledThumbRadius: 8),
-                    ),
-                    child: Slider(
-                      min: 200,
-                      max: 800,
-                      value: _billLimit,
-                      onChanged: (v) => setState(() => _billLimit = v),
-                    ),
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        '200 ﷼',
-                        style: TextStyle(
-                          color: Colors.white.withOpacity(0.60),
-                          fontSize: 11,
-                        ),
-                      ),
-                      Text(
-                        '800 ﷼',
-                        style: TextStyle(
-                          color: Colors.white.withOpacity(0.60),
-                          fontSize: 11,
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 10),
-                  Row(
-                    children: [
-                      Icon(
-                        Icons.bolt_rounded,
-                        size: 15,
-                        color: Colors.white.withOpacity(0.65),
-                      ),
-                      const SizedBox(width: 6),
-                      Flexible(
-                        child: Text(
-                          '≈ ${(_billLimit * 4).round()} kWh at 0.25 ﷼/kWh',
-                          overflow: TextOverflow.ellipsis,
-                          style: TextStyle(
-                            color: Colors.white.withOpacity(0.62),
-                            fontSize: 11.5,
-                          ),
-                        ),
-                      ),
-                    ],
                   ),
                 ],
               ),
@@ -185,7 +239,7 @@ class _BillPredictionPageState extends State<BillPredictionPage> {
                   ),
                   Switch(
                     value: _overLimitAlert,
-                    activeColor: AppColors.button,
+                    activeThumbColor: AppColors.button,
                     onChanged: (v) => setState(() => _overLimitAlert = v),
                   ),
                 ],
@@ -288,41 +342,20 @@ class _BillPredictionPageState extends State<BillPredictionPage> {
 
             const SizedBox(height: 18),
 
-            // ===== Buttons =====
+            // ===== Button (Adjust Usage) =====
             SizedBox(
               width: double.infinity,
               height: 54,
               child: ElevatedButton(
-                onPressed: () {},
+                onPressed: _openSetBillLimitSheet,
                 child: const Text(
                   'Adjust Usage',
                   style: TextStyle(fontSize: 15.5, fontWeight: FontWeight.w900),
                 ),
               ),
             ),
-            const SizedBox(height: 10),
-            SizedBox(
-              width: double.infinity,
-              height: 54,
-              child: OutlinedButton(
-                onPressed: () {},
-                style: OutlinedButton.styleFrom(
-                  side: BorderSide(color: Colors.white.withOpacity(0.18)),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(14),
-                  ),
-                  backgroundColor: Colors.white.withOpacity(0.04),
-                ),
-                child: Text(
-                  'View All Recommendations',
-                  style: TextStyle(
-                    color: Colors.white.withOpacity(0.88),
-                    fontSize: 14.5,
-                    fontWeight: FontWeight.w800,
-                  ),
-                ),
-              ),
-            ),
+
+            // ✅ الزر الثاني محذوف بالكامل مثل ما طلبتي
           ],
         ),
       ),

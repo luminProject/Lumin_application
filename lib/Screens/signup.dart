@@ -98,32 +98,46 @@ class _SignupPageState extends State<SignupPage> {
 
                       const SizedBox(height: _gap18),
 
+                      // Username
                       _field(
                         TextField(
-                          decoration: const InputDecoration(
+                          style: const TextStyle(
+                            color: Colors.white, // ✅ النص أبيض
+                            fontWeight: FontWeight.w600,
+                          ),
+                          cursorColor: Colors.white, // ✅ المؤشر أبيض
+                          decoration: InputDecoration(
                             hintText: 'Username',
-                            prefixIcon: Icon(Icons.person_outline),
+                            hintStyle: TextStyle(color: Colors.white.withOpacity(0.5)),
+                            prefixIcon: const Icon(Icons.person_outline),
                           ),
                         ),
                       ),
                       const SizedBox(height: _gap16),
 
+                      // Email
                       _field(
                         TextField(
-                          decoration: const InputDecoration(
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontWeight: FontWeight.w600,
+                          ),
+                          cursorColor: Colors.white,
+                          decoration: InputDecoration(
                             hintText: 'Email address',
-                            prefixIcon: Icon(Icons.email_outlined),
+                            hintStyle: TextStyle(color: Colors.white.withOpacity(0.5)),
+                            prefixIcon: const Icon(Icons.email_outlined),
                           ),
                         ),
                       ),
                       const SizedBox(height: _gap16),
 
-                      // ✅✅✅ Phone field (flag + country code) — ONLY CHANGE HERE
+                      // ✅✅✅ Phone field (flag + country code)
                       _field(
                         IntlPhoneField(
                           initialCountryCode: 'SA',
                           disableLengthCheck: true,
-                          cursorColor: AppColors.button,
+                          cursorColor: Colors.white, // ✅ خليته أبيض
                           style: const TextStyle(
                             color: Colors.white,
                             fontWeight: FontWeight.w700,
@@ -136,9 +150,10 @@ class _SignupPageState extends State<SignupPage> {
                             Icons.keyboard_arrow_down,
                             color: Colors.white.withOpacity(0.6),
                           ),
-                          decoration: const InputDecoration(
+                          decoration: InputDecoration(
                             hintText: 'Phone number',
-                            prefixIcon: Icon(Icons.phone_outlined),
+                            hintStyle: TextStyle(color: Colors.white.withOpacity(0.5)),
+                            prefixIcon: const Icon(Icons.phone_outlined),
                           ),
                           onChanged: (phone) {
                             _fullPhone = phone.completeNumber;
@@ -151,8 +166,14 @@ class _SignupPageState extends State<SignupPage> {
                       _field(
                         TextField(
                           obscureText: _obscurePassword,
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontWeight: FontWeight.w600,
+                          ),
+                          cursorColor: Colors.white,
                           decoration: InputDecoration(
                             hintText: 'Password',
+                            hintStyle: TextStyle(color: Colors.white.withOpacity(0.5)),
                             prefixIcon: const Icon(Icons.lock_outline),
                             suffixIcon: IconButton(
                               onPressed: () =>
@@ -161,7 +182,7 @@ class _SignupPageState extends State<SignupPage> {
                                 _obscurePassword
                                     ? Icons.visibility_off_outlined
                                     : Icons.visibility_outlined,
-                                color: _obscurePassword ? null : AppColors.button,
+                                color: _obscurePassword ? Colors.white54 : AppColors.button,
                               ),
                             ),
                           ),
@@ -173,8 +194,14 @@ class _SignupPageState extends State<SignupPage> {
                       _field(
                         TextField(
                           obscureText: _obscureConfirmPassword,
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontWeight: FontWeight.w600,
+                          ),
+                          cursorColor: Colors.white,
                           decoration: InputDecoration(
                             hintText: 'Confirm password',
+                            hintStyle: TextStyle(color: Colors.white.withOpacity(0.5)),
                             prefixIcon: const Icon(Icons.lock_outline),
                             suffixIcon: IconButton(
                               onPressed: () => setState(
@@ -183,7 +210,7 @@ class _SignupPageState extends State<SignupPage> {
                                 _obscureConfirmPassword
                                     ? Icons.visibility_off_outlined
                                     : Icons.visibility_outlined,
-                                color: _obscureConfirmPassword ? null : AppColors.button,
+                                color: _obscureConfirmPassword ? Colors.white54 : AppColors.button,
                               ),
                             ),
                           ),
@@ -217,7 +244,7 @@ class _SignupPageState extends State<SignupPage> {
                       /// ✅ Button من AppTheme
                       SizedBox(
                         width: double.infinity,
-                        height: 52,
+                        height: 55,
                         child: ElevatedButton(
                           onPressed: () {},
                           child: const Text(
